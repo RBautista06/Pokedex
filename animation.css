@@ -1,0 +1,90 @@
+@keyframes heightPop {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes errorPop {
+  from {
+    transform: translateX(-150px);
+  }
+  to {
+    transform: translateX(0px);
+  }
+}
+@keyframes errorHide {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+@keyframes fromBottom {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+@keyframes fromTop {
+  from {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes spawnAnimation {
+  0% {
+    transform: scale(0);
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes rotatingPop {
+  from {
+    transform: scale(0) rotate(-360deg);
+  }
+  to {
+    transform: scale(0.7) rotate(0deg);
+  }
+}
+
+.pokemon-sprite img.initial-animate {
+  animation: rotatingPop 2s ease forwards;
+}
+
+.pokemon-sprite img.animate-sprite {
+  animation: fromBottom 1s ease forwards;
+}
+.spawn {
+  opacity: 0;
+  visibility: none;
+}
+.pop {
+  opacity: 1;
+  visibility: visible;
+  animation: spawnAnimation 1s ease;
+}
+.error-display {
+  animation: heightPop 0.5s linear;
+}
+.error-hide {
+  animation: errorHide 0.5s linear;
+}
+.fromTop {
+  animation: fromTop 0.8s ease;
+}

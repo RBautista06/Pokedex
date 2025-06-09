@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Human vs Pokémon Height Comparison</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 2rem auto;
+        text-align: center;
+      }
+      h1 {
+        margin-bottom: 0.5rem;
+      }
+      .input-area {
+        margin-bottom: 1rem;
+      }
+      #comparison {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 2rem;
+        border: solid 1px black;
+        margin-top: 2rem;
+      }
+      .figure {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .figure img {
+        height: auto;
+        width: auto;
+        display: block;
+        border: 1px solid #ccc;
+        background: #f9f9f9;
+      }
+      .scale-bar {
+        margin-top: 1rem;
+        position: relative;
+        height: 10px;
+        width: 100%;
+        max-width: 400px;
+        background: linear-gradient(
+          to right,
+          #4caf50 0%,
+          #4caf50 50%,
+          #2196f3 50%,
+          #2196f3 100%
+        );
+      }
+      .scale-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.25rem;
+        font-size: 0.9rem;
+      }
+      .error {
+        color: red;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Compare Human Height and Pokémon Height</h1>
+    <div class="input-area">
+      <input
+        type="text"
+        id="pokemon-input"
+        placeholder="Enter Pokémon name or ID" />
+      <button id="compare-btn">Compare</button>
+    </div>
+
+    <div id="comparison">
+      <div class="figure" id="human-figure">
+        <img src="pictures/human.svg" alt="Human" id="human-img" />
+        <div>
+          Human
+          <br />
+          <span id="human-height-label"></span>
+          m
+        </div>
+      </div>
+      <div class="figure" id="pokemon-figure">
+        <img src="" alt="Pokémon" id="pokemon-img" />
+        <div id="pokemon-name"></div>
+        <div>
+          <span id="pokemon-height-label"></span>
+          m
+        </div>
+      </div>
+    </div>
+
+    <div class="scale-bar" id="scale-bar" style="display: none"></div>
+    <div class="scale-labels" id="scale-labels" style="display: none">
+      <div>0 m</div>
+      <div>Human Height</div>
+      <div>Pokémon Height</div>
+    </div>
+
+    <div class="error" id="error-msg"></div>
+
+    <script>
+      const humanHeightM = 1.75; // average human height in meters
+      const maxPixelHeight = 300; // max pixel height for the tallest figure
+
+      const compareBtn = document.getElementById("compare-btn");
+      const pokemonInput = document.getElementById("pokemon-input");
+      const comparisonDiv = document.getElementById("comparison");
+      const humanHeightLabel = document.getElementById("human-height-label");
+      const pokemonHeightLabel = document.getElementById(
+        "pokemon-height-label"
+      );
+      const pokemonImg = document.getElementById("pokemon-img");
+      const pokemonName = document.getElementById("pokemon-name");
+      const errorMsg = document.getElementById("error-msg");
+      const scaleBar = document.getElementById("scale-bar");
+      const scaleLabels = document.getElementById("scale-labels");
+
+      compareBtn.addEventListener("click", () => {
+        const query = pokemonInput.value.trim().toLowerCase();
+        if (!query) return;
+
+        errorMsg.textContent = "";
+        comparisonDiv.style.display = "none";
+        scaleBar.style.display = "none";
+        scaleLabels.style.display = "none";
+
+        fetch(`https://pokeapi.co/api/v2/pokemon/${query}`)
+          .then((res) => {
+            if (!res.ok) throw new Error("Pokémon not found");
+            return res.json();
+          })
+          .then((data) => {
+            const pokeHeightDm = data.height; // decimeters
+            const pokeHeightM = pokeHeightDm / 10; // meters
+
+            humanHeightLabel.textContent = humanHeightM.toFixed(2);
+            pokemonHeightLabel.textContent = pokeHeightM.toFixed(2);
+            pokemonName.textContent =
+              data.name.charAt(0).toUpperCase() + data.name.slice(1);
+
+            const spriteUrl =
+              data.sprites.other["official-artwork"].front_default ||
+              data.sprites.front_default ||
+              "";
+
+            if (!spriteUrl) {
+              errorMsg.textContent = "No sprite available for this Pokémon.";
+              return;
+            }
+
+            pokemonImg.src = spriteUrl;
+
+            // Calculate scale factor so tallest is maxPixelHeight
+            const maxHeight = Math.max(humanHeightM, pokeHeightM);
+            const pixelsPerMeter = maxPixelHeight / maxHeight;
+
+            const humanPixelHeight = humanHeightM * pixelsPerMeter;
+            const pokemonPixelHeight = pokeHeightM * pixelsPerMeter;
+
+            document.getElementById("human-img").style.height =
+              humanPixelHeight + "px";
+            document.getElementById("human-img").style.width = "auto";
+
+            pokemonImg.style.height = pokemonPixelHeight + "px";
+            pokemonImg.style.width = "auto";
+
+            comparisonDiv.style.display = "flex";
+            scaleBar.style.display = "block";
+            scaleLabels.style.display = "flex";
+
+            // Update scale bar gradient
+            const humanPercent = (humanHeightM / maxHeight) * 100;
+            const pokemonPercent = (pokeHeightM / maxHeight) * 100;
+
+            scaleBar.style.background = `linear-gradient(to right,
+            #4caf50 0%,
+            #4caf50 ${humanPercent}%,
+            #2196f3 ${humanPercent}%,
+            #2196f3 ${humanPercent + pokemonPercent}%)`;
+          })
+          .catch((err) => {
+            errorMsg.textContent = err.message;
+          });
+      });
+    </script>
+  </body>
+</html>

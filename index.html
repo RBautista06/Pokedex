@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=khand@300,400,500,600,700&f[]=kola@400&f[]=clash-grotesk@200,300,400,500,600,700,1&display=swap"
+      rel="stylesheet" />
+
+    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="mediaquery.css" />
+    <link rel="stylesheet" href="typeColor.css" />
+    <link rel="stylesheet" href="animation.css" />
+    <title>Pokedex</title>
+  </head>
+  <body>
+    <section class="header-section">
+      <img src="pictures/pokemon-logo2.png" class="spawn" />
+      <form class="search-container spawn" id="form">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Enter a Pokemon..."
+          class="spawn"
+          autocomplete="off" />
+        <button class="search-button spawn" type="submit">Search</button>
+      </form>
+      <div class="search-suggestion">
+        <ul id="search-suggestion"></ul>
+      </div>
+    </section>
+    <section>
+      <div class="error-wrapper" style="display: none">
+        <div class="error-container">
+          <p id="error-display">Please Enter a Pokemon</p>
+        </div>
+        <div class="alert-symbol"><span>!</span></div>
+      </div>
+    </section>
+    <section class="pokedex-section">
+      <div class="pokemon-card">
+        <div class="pokemon-bg fromTop"></div>
+        <div class="pokemon-title">
+          <h2 id="pokemon-name" class="pokemon-name spawn">POKEMON</h2>
+          <span class="span1"></span>
+          <span class="span2"></span>
+        </div>
+
+        <div class="pokemon-sprite">
+          <img
+            src="pictures/pokeball.png"
+            alt="sprite"
+            id="pokemonSprite"
+            class="initial-animate" />
+          <audio src="" alt="pokemonCry" id="pokemonCry" autoplay></audio>
+        </div>
+        <p id="pokemonType"></p>
+        <div class="pokemon-description">
+          <p class="" id="flavored-text">
+            In the world of Pokémon, Pokémon are creatures of all shapes and
+            sizes who live alongside humans. People known as Pokémon Trainers
+            form lasting friendships with their Pokémon partners, and as a team,
+            they go on adventures, train to improve their skills, and battle in
+            friendly competitions.
+          </p>
+        </div>
+        <div class="statistics">
+          <div id="stats-container" class="stats-container">
+            <div class="stat-row" data-stat="hp">
+              <div class="stat-label">HP</div>
+              <div class="stat-bar">
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+              </div>
+              <p class="stat-value">HP</p>
+            </div>
+            <div class="stat-row" data-stat="attack">
+              <div class="stat-label">Attack</div>
+              <div class="stat-bar">
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+              </div>
+              <div class="stat-value">HP</div>
+            </div>
+            <div class="stat-row" data-stat="defense">
+              <div class="stat-label">Defense</div>
+              <div class="stat-bar">
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+              </div>
+              <div class="stat-value">HP</div>
+            </div>
+            <div class="stat-row" data-stat="special-attack">
+              <div class="stat-label">Sp. Atk</div>
+              <div class="stat-bar">
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+              </div>
+              <div class="stat-value">HP</div>
+            </div>
+            <div class="stat-row" data-stat="special-defense">
+              <div class="stat-label">Sp. Def</div>
+              <div class="stat-bar">
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+              </div>
+              <div class="stat-value">HP</div>
+            </div>
+            <div class="stat-row" data-stat="speed">
+              <div class="stat-label">Speed</div>
+              <div class="stat-bar">
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+                <span class="pill"></span>
+              </div>
+              <div class="stat-value">HP</div>
+            </div>
+          </div>
+          <div class="chartheight">
+            <div class="chart">
+              <canvas
+                id="myRadarChart"
+                class="stats-chart"
+                width="200"
+                height="200"></canvas>
+              <div class="pokemonTypes" id="type-container"></div>
+            </div>
+            <div class="title">
+              <h2>Height Comparison</h2>
+            </div>
+            <div class="height-comparison">
+              <div class="figure-shadow">
+                <span class="top-border-human"></span>
+                <span class="left-border-human"></span>
+                <span class="bottom-border-human"></span>
+                <span class="human-height-value" id="human-height-value"></span>
+                <div class="figure">
+                  <div id="human-height" class="human-figure"></div>
+                </div>
+              </div>
+              <div class="figure-shadow">
+                <span class="top-border"></span>
+                <span class="right-border"></span>
+                <span class="bottom-border"></span>
+                <span
+                  class="pokemon-height-value"
+                  id="pokemon-height-value"></span>
+                <div class="figure">
+                  <div id="pokemon-height" class="pokemon-figure" src=""></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="evolution-chart-container">
+          <div class="title">
+            <h2>Evolution Chart</h2>
+          </div>
+          <div class="evolution-chart" id="evolution-chart">
+            <!-- the card will be displayed here -->
+          </div>
+        </div>
+        <div class="est">
+          <span>&copy; 2025 Zenith Pokédex. All rights reserved</span>
+        </div>
+      </div>
+    </section>
+  </body>
+  <script type="module" src="index.js"></script>
+</html>
