@@ -549,3 +549,58 @@ section {
   padding-top: 0.5rem;
   text-align: center;
 }
+.loader {
+  position: fixed;
+  top: -120vh;
+  left: 0;
+  width: 100vw;
+  height: 120vh;
+  background: radial-gradient(
+    at bottom center,
+    rgba(232, 240, 2, 1) 1%,
+    rgba(44, 222, 77, 1) 32%,
+    rgba(50, 185, 252, 1) 58%,
+    rgba(252, 50, 192, 1) 99%
+  );
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: top 0.6s ease-in-out;
+
+  /* Mask setup */
+  mask-image: url("pictures/fire-desktop.svg");
+  -webkit-mask-image: url("pictures/fire-desktop.svg");
+  mask-size: cover;
+  -webkit-mask-size: cover;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+
+.loader img {
+  width: auto;
+  height: 200px;
+  top: -10vh;
+  position: relative;
+  animation: pulse 2s infinite;
+}
+
+/* Show loader */
+.loader.visible {
+  top: 0;
+}
+
+/* Optional: pulse animation on pokeball */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2) rotate(360deg);
+  }
+  100% {
+    transform: scale(1) rotate(720deg);
+  }
+}

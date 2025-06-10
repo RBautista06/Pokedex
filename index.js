@@ -2,7 +2,7 @@ import { displayRadarChart } from "./chart.js";
 import {
   heightComparison,
   getpokemonTypes,
-  getpokemonEvolutions,
+  getPokemonEvolutions,
 } from "./stats.js";
 
 const pokemonForm = document.querySelector("#form");
@@ -119,22 +119,71 @@ export async function getPokemonData(pokemon) {
   const data = await response.json();
   return data;
 }
+let loaderStartTime = null;
 
-export function displayData(pokemonData) {
-  const pokemonSprite =
-    pokemonData.sprites.other["official-artwork"].front_default;
-  const pokemonCryURL = pokemonData.cries?.latest || ""; // safety in case cry not available
+export function showLoader() {
+  const loader = document.getElementById("loader");
+  loader.classList.add("visible");
+  loaderStartTime = Date.now();
+}
 
-  pokemonImgS.classList.remove("initial-animate");
+export function hideLoader() {
+  const loader = document.getElementById("loader");
+  const elapsed = Date.now() - loaderStartTime;
 
-  pokemonImgS.onload = () => {
+  const minDuration = 1000;
+  const remainingTime = Math.max(minDuration - elapsed, 0);
+
+  setTimeout(() => {
+    loader.classList.remove("visible");
+  }, remainingTime);
+}
+export async function displayData(pokemonData) {
+  showLoader();
+
+  const minLoaderDuration = 2000;
+  const loaderStartTime = Date.now();
+
+  try {
+    const pokemonSprite =
+      pokemonData.sprites.other["official-artwork"].front_default;
+    const pokemonCryURL = pokemonData.cries?.latest || "";
+
+    // 1. Preload image invisibly
+    const preloadedImage = new Image();
+    const imageLoaded = new Promise((resolve, reject) => {
+      preloadedImage.onload = () => resolve();
+      preloadedImage.onerror = reject;
+      preloadedImage.src = pokemonSprite;
+    });
+
+    // 2. Load evolutions (async)
+    const evolutionsLoaded = getPokemonEvolutions(pokemonData);
+
+    // 3. Wait for both image and evolutions
+    await Promise.all([imageLoaded, evolutionsLoaded]);
+
+    // 4. Ensure loader stays visible at least 3 seconds
+    const elapsed = Date.now() - loaderStartTime;
+    const remaining = Math.max(minLoaderDuration - elapsed, 0);
+    if (remaining > 0) await new Promise((r) => setTimeout(r, remaining));
+
+    // 5. Hide loader
+    hideLoader();
+
+    // 6. Now swap in the real image and trigger animation
+    pokemonImgS.classList.remove("initial-animate");
     pokemonImgS.classList.remove("animate-sprite");
     void pokemonImgS.offsetWidth;
+    pokemonImgS.src = pokemonSprite;
     pokemonImgS.classList.add("animate-sprite");
+
+    // 7. Play cry and display everything else
     if (pokemonCryURL) {
       pokemonCry.src = pokemonCryURL;
       pokemonCry.play();
     }
+
     getPokemonType(pokemonData);
     getPokemonDescription(pokemonData);
     const { pillColor, graphColor } = getPokemonType(pokemonData);
@@ -144,15 +193,12 @@ export function displayData(pokemonData) {
     getpokemonTypes(pokemonData);
 
     document.querySelector(".statistics").style.display = "flex";
-    document.querySelector(".evolution-chart-container ").style.display =
-      "flex";
-
-    getpokemonEvolutions(pokemonData);
-
-    pokemonImgS.onload = null;
-  };
-  pokemonImgS.src = pokemonSprite;
-  console.log(pokemonData);
+    document.querySelector(".evolution-chart-container").style.display = "flex";
+  } catch (error) {
+    console.error("Error displaying data:", error);
+    displayError("Failed to load Pokémon data.");
+    hideLoader();
+  }
 }
 
 function renderStatBars(stats, pillColor) {

@@ -86,5 +86,5 @@
   animation: errorHide 0.5s linear;
 }
 .fromTop {
-  animation: fromTop 0.8s ease;
+  animation: fromTop 1s ease;
 }

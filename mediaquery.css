@@ -1,4 +1,44 @@
+@media (max-width: 1000px) {
+  .loader {
+    mask-image: url("pictures/fire-tablet.svg");
+    -webkit-mask-image: url("pictures/fire-tablet.svg");
+    mask-size: cover;
+    -webkit-mask-size: cover;
+    mask-position: center;
+    -webkit-mask-position: center;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+  }
+  .loader img {
+    width: auto;
+    height: 100px;
+    top: -10vh;
+    position: relative;
+    animation: pulse 2s infinite;
+  }
+}
 @media (max-width: 600px) {
+  .loader {
+    top: -100vh;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    mask-image: url("pictures/fire-mobile400.svg");
+    -webkit-mask-image: url("pictures/fire-mobile400.svg");
+    mask-size: cover;
+    -webkit-mask-size: cover;
+    mask-position: center;
+    -webkit-mask-position: center;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+  }
+  .loader img {
+    width: auto;
+    height: 100px;
+    top: 0;
+    position: relative;
+    animation: pulse 2s infinite;
+  }
   body {
     gap: 0px;
   }
