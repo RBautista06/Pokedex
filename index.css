@@ -555,12 +555,14 @@ section {
   left: 0;
   width: 100vw;
   height: 120vh;
-  background: radial-gradient(
-    at bottom center,
-    rgba(232, 240, 2, 1) 1%,
-    rgba(44, 222, 77, 1) 32%,
-    rgba(50, 185, 252, 1) 58%,
-    rgba(252, 50, 192, 1) 99%
+  background: linear-gradient(
+    to bottom,
+    #5d4a6d,
+    #8e74a4,
+    #8e74a4,
+    #8e74a4,
+    #8e74a4,
+    #c8a2e7
   );
   z-index: 1000;
   display: flex;
@@ -581,10 +583,10 @@ section {
 
 .loader img {
   width: auto;
-  height: 200px;
+  height: 400px;
   top: -10vh;
   position: relative;
-  animation: pulse 2s infinite;
+  /* animation: pulse 2s infinite; */
 }
 
 /* Show loader */

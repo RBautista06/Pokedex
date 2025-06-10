@@ -1,5 +1,13 @@
 @media (max-width: 1000px) {
   .loader {
+    background: linear-gradient(
+      to bottom,
+      #5d4a6d,
+      #8e74a4,
+      #8e74a4,
+      #8e74a4,
+      #c8a2e7
+    );
     mask-image: url("pictures/fire-tablet.svg");
     -webkit-mask-image: url("pictures/fire-tablet.svg");
     mask-size: cover;
@@ -10,11 +18,12 @@
     -webkit-mask-repeat: no-repeat;
   }
   .loader img {
-    width: auto;
-    height: 100px;
-    top: -10vh;
     position: relative;
-    animation: pulse 2s infinite;
+    width: 300px;
+    height: auto;
+    top: -10vh;
+
+    /* animation: pulse 2s infinite; */
   }
 }
 @media (max-width: 600px) {
@@ -33,11 +42,10 @@
     -webkit-mask-repeat: no-repeat;
   }
   .loader img {
-    width: auto;
-    height: 100px;
+    width: 300px;
+    height: auto;
     top: 0;
     position: relative;
-    animation: pulse 2s infinite;
   }
   body {
     gap: 0px;
