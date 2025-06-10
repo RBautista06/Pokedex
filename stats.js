@@ -154,6 +154,8 @@ function appendCard(pokemon, container) {
   card.addEventListener("click", async () => {
     try {
       const pokemonData = await getPokemonData(pokemon.name);
+      const pokemonInput = document.querySelector("#searchInput");
+      pokemonInput.value = capitalize(pokemon.name);
       displayData(pokemonData);
       pokemonName(pokemon.name);
       window.scrollTo({
@@ -170,5 +172,8 @@ function appendCard(pokemon, container) {
 }
 
 function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1);
+  return word
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 }
