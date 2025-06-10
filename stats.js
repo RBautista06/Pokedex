@@ -122,7 +122,6 @@ export async function getpokemonEvolutions(pokemonData) {
 export function renderEvolutionCards(evolutions) {
   const container = document.querySelector("#evolution-chart");
   container.innerHTML = ""; // Clear old cards
-
   evolutions.forEach((evolution) => {
     appendCard(evolution, container);
 
@@ -157,6 +156,10 @@ function appendCard(pokemon, container) {
       const pokemonData = await getPokemonData(pokemon.name);
       displayData(pokemonData);
       pokemonName(pokemon.name);
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth", // optional for smooth scrolling
+      });
     } catch (error) {
       console.error("Failed to load evolution:", error);
       displayError("Failed to load this evolution.");
