@@ -55,19 +55,20 @@ export async function getpokemonEvolutions(pokemonData) {
   const container = document.querySelector(".evolution-chart-container");
   if (!pokemonSpecies.ok) {
     container.style.display = "none";
-    throw new Error("this pokemon has no evolution");
+    throw new Error("This Pokémon has no evolution.");
   }
-  const pokemonEvolution = await pokemonSpecies.json();
-  const evoUrl = pokemonEvolution.evolution_chain.url;
+
+  const pokemonSpeciesData = await pokemonSpecies.json();
+  const evoUrl = pokemonSpeciesData.evolution_chain.url;
   const evoRes = await fetch(evoUrl);
   if (!evoRes.ok) {
-    throw new Error("evolution chain not fetch");
+    throw new Error("Evolution chain could not be fetched.");
   }
+
   const evoData = await evoRes.json();
-  ///this function will get all the data for each node
+
   function traverse(chainNode, collected = []) {
     if (!chainNode) return collected;
-
     collected.push(chainNode.species.name);
     for (const evolution of chainNode.evolves_to) {
       traverse(evolution, collected);
@@ -77,59 +78,92 @@ export async function getpokemonEvolutions(pokemonData) {
 
   const evolutionNames = traverse(evoData.chain);
 
-  ///this will return each evolution to an object that contains name and sprite
   const evolutions = await Promise.all(
     evolutionNames.map(async (name) => {
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-      if (!res.ok) return { name, sprite: null, type: null };
+      if (!res.ok) return { name, sprite: null, type: null, forms: [] };
 
       const data = await res.json();
+      const type = data.types[0]?.type.name || null;
+
+      // Get other forms via species API
+      const speciesRes = await fetch(data.species.url);
+      const speciesData = await speciesRes.json();
+
+      // Fetch all varieties (includes megas/gmax etc.)
+      const forms = await Promise.all(
+        speciesData.varieties
+          .filter((v) => v.pokemon.name !== name) // Skip base form
+          .map(async (variant) => {
+            const formRes = await fetch(variant.pokemon.url);
+            if (!formRes.ok) return null;
+            const formData = await formRes.json();
+
+            return {
+              name: formData.name,
+              sprite: formData.sprites.other["official-artwork"].front_default,
+              type: formData.types[0]?.type.name || null,
+            };
+          })
+      );
+
       return {
         name,
         sprite: data.sprites.other["official-artwork"].front_default,
-        type: data.types[0]?.type.name || null, // get the first type safely
+        type,
+        forms: forms.filter((f) => f && f.sprite), // Remove nulls or empty images
       };
     })
   );
+
   renderEvolutionCards(evolutions);
-  console.log(evolutions);
 }
+
 export function renderEvolutionCards(evolutions) {
   const container = document.querySelector("#evolution-chart");
-  container.innerHTML = ""; // clear old cards
+  container.innerHTML = ""; // Clear old cards
 
   evolutions.forEach((evolution) => {
-    const card = document.createElement("button");
-    card.className = "evolution-card";
+    appendCard(evolution, container);
 
-    const imgContainer = document.createElement("div");
-    imgContainer.className = "evolution-img-container";
-
-    const img = document.createElement("img");
-    img.src = evolution.sprite || "";
-    img.alt = evolution.name;
-    imgContainer.appendChild(img);
-
-    const nameDiv = document.createElement("div");
-    nameDiv.className = `evolution-name ${evolution.type}-type`;
-    nameDiv.innerHTML = `<h2>${capitalize(evolution.name)}</h2>`;
-
-    card.appendChild(imgContainer);
-    card.appendChild(nameDiv);
-
-    card.addEventListener("click", async () => {
-      try {
-        const pokemonData = await getPokemonData(evolution.name);
-        displayData(pokemonData);
-        pokemonName(evolution.name);
-      } catch (error) {
-        console.error("Failed to load evolution:", error);
-        displayError("Failed to load this evolution.");
-      }
-    });
-
-    container.appendChild(card);
+    // Add additional forms (Mega, Gmax, etc.)
+    if (Array.isArray(evolution.forms)) {
+      evolution.forms.forEach((form) => appendCard(form, container));
+    }
   });
+}
+
+function appendCard(pokemon, container) {
+  const card = document.createElement("button");
+  card.className = "evolution-card";
+
+  const imgContainer = document.createElement("div");
+  imgContainer.className = "evolution-img-container";
+
+  const img = document.createElement("img");
+  img.src = pokemon.sprite || "";
+  img.alt = pokemon.name;
+  imgContainer.appendChild(img);
+
+  const nameDiv = document.createElement("div");
+  nameDiv.className = `evolution-name ${pokemon.type}-type`;
+  nameDiv.innerHTML = `<h2>${capitalize(pokemon.name)}</h2>`;
+
+  card.appendChild(imgContainer);
+  card.appendChild(nameDiv);
+
+  card.addEventListener("click", async () => {
+    try {
+      const pokemonData = await getPokemonData(pokemon.name);
+      displayData(pokemonData);
+      pokemonName(pokemon.name);
+    } catch (error) {
+      console.error("Failed to load evolution:", error);
+      displayError("Failed to load this evolution.");
+    }
+  });
+
+  container.appendChild(card);
 }
 
 function capitalize(word) {
